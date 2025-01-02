@@ -20,49 +20,35 @@ const SignupForm = ({ switchAuthState }) => {
       password: "",
       username: "",
       displayName: "",
-      confirmPassword: "",
-      email: "",
-      photoUrl: ""
+      confirmPassword: ""
     },
     validationSchema: Yup.object({
       username: Yup.string()
-        .min(8, "Username must be at least 8 characters")
-        .required("Username is required"),
+        .min(8, "username minimum 8 characters")
+        .required("username is required"),
       password: Yup.string()
-        .min(8, "Password must be at least 8 characters")
-        .required("Password is required"),
+        .min(8, "password minimum 8 characters")
+        .required("password is required"),
       displayName: Yup.string()
-        .min(8, "Display name must be at least 8 characters")
-        .required("Display name is required"),
+        .min(8, "displayName minimum 8 characters")
+        .required("displayName is required"),
       confirmPassword: Yup.string()
-        .oneOf([Yup.ref("password")], "Passwords do not match")
-        .required("Confirm password is required"),
-      email: Yup.string()
-        .email("Invalid email format")
-        .required("Email is required"),
-      photoUrl: Yup.string()
-        .url("Invalid URL format")
-        .required("Photo URL is required")
+        .oneOf([Yup.ref("password")], "confirmPassword not match")
+        .min(8, "confirmPassword minimum 8 characters")
+        .required("confirmPassword is required")
     }),
-    onSubmit: async (values) => {
+    onSubmit: async values => {
       setErrorMessage(undefined);
       setIsLoginRequest(true);
-
-      const { response, err } = await userApi.signup({
-        username: values.username,
-        displayName: values.displayName,
-        email: values.email,
-        photoUrl: values.photoUrl,
-        password: values.password
-      });
-
+      console.log("asdasdasdasd");
+      const { response, err } = await userApi.signup(values);
       setIsLoginRequest(false);
 
       if (response) {
         signinForm.resetForm();
         dispatch(setUser(response));
         dispatch(setAuthModalOpen(false));
-        toast.success("Sign-up successful!");
+        toast.success("Sign in success");
       }
 
       if (err) setErrorMessage(err.message);
@@ -74,68 +60,46 @@ const SignupForm = ({ switchAuthState }) => {
       <Stack spacing={3}>
         <TextField
           type="text"
-          placeholder="Username"
+          placeholder="username"
           name="username"
           fullWidth
           value={signinForm.values.username}
           onChange={signinForm.handleChange}
           color="success"
-          error={signinForm.touched.username && Boolean(signinForm.errors.username)}
+          error={signinForm.touched.username && signinForm.errors.username !== undefined}
           helperText={signinForm.touched.username && signinForm.errors.username}
         />
         <TextField
           type="text"
-          placeholder="Display Name"
+          placeholder="display name"
           name="displayName"
           fullWidth
           value={signinForm.values.displayName}
           onChange={signinForm.handleChange}
           color="success"
-          error={signinForm.touched.displayName && Boolean(signinForm.errors.displayName)}
+          error={signinForm.touched.displayName && signinForm.errors.displayName !== undefined}
           helperText={signinForm.touched.displayName && signinForm.errors.displayName}
         />
         <TextField
-          type="email"
-          placeholder="Email"
-          name="email"
-          fullWidth
-          value={signinForm.values.email}
-          onChange={signinForm.handleChange}
-          color="success"
-          error={signinForm.touched.email && Boolean(signinForm.errors.email)}
-          helperText={signinForm.touched.email && signinForm.errors.email}
-        />
-        <TextField
-          type="url"
-          placeholder="Photo URL"
-          name="photoUrl"
-          fullWidth
-          value={signinForm.values.photoUrl}
-          onChange={signinForm.handleChange}
-          color="success"
-          error={signinForm.touched.photoUrl && Boolean(signinForm.errors.photoUrl)}
-          helperText={signinForm.touched.photoUrl && signinForm.errors.photoUrl}
-        />
-        <TextField
           type="password"
-          placeholder="Password"
+          placeholder="password"
           name="password"
           fullWidth
           value={signinForm.values.password}
           onChange={signinForm.handleChange}
           color="success"
-          error={signinForm.touched.password && Boolean(signinForm.errors.password)}
+          error={signinForm.touched.password && signinForm.errors.password !== undefined}
           helperText={signinForm.touched.password && signinForm.errors.password}
         />
         <TextField
           type="password"
-          placeholder="Confirm Password"
+          placeholder="confirm password"
           name="confirmPassword"
           fullWidth
           value={signinForm.values.confirmPassword}
           onChange={signinForm.handleChange}
           color="success"
-          error={signinForm.touched.confirmPassword && Boolean(signinForm.errors.confirmPassword)}
+          error={signinForm.touched.confirmPassword && signinForm.errors.confirmPassword !== undefined}
           helperText={signinForm.touched.confirmPassword && signinForm.errors.confirmPassword}
         />
       </Stack>
@@ -148,7 +112,7 @@ const SignupForm = ({ switchAuthState }) => {
         sx={{ marginTop: 4 }}
         loading={isLoginRequest}
       >
-        Sign Up
+        sign up
       </LoadingButton>
 
       <Button
@@ -156,12 +120,12 @@ const SignupForm = ({ switchAuthState }) => {
         sx={{ marginTop: 1 }}
         onClick={() => switchAuthState()}
       >
-        Sign In
+        sign in
       </Button>
 
       {errorMessage && (
         <Box sx={{ marginTop: 2 }}>
-          <Alert severity="error" variant="outlined">{errorMessage}</Alert>
+          <Alert severity="error" variant="outlined" >{errorMessage}</Alert>
         </Box>
       )}
     </Box>
